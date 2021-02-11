@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="col mt-2 ml-5 p-2">
+            <form #fperfon="ngForm" [formGroup]="personForm" (ngSubmit)="onSubmit(fperfon)">
+                <div class="form-group w-50">
+                    <label for="inputName">Name</label>
+                    <input type="text" [ngClass]="{'is-invalid': personForm.get('name')?.errors && submitted}"
+                        class="form-control" id="inputName" placeholder="Enter name" formControlName="name">
+                    <div *ngIf="submitted && personForm.get('name')?.errors" class="invalid-feedback">
+                        <div *ngIf="personForm.get('name')?.errors?.required">Name is required</div>
+                    </div>
+                </div>
+                <div *ngFor="let course of courses; let i=index" class="form-check">
+                    <input (change)="onCheckboxChange($event)" class="form-check-input" type="checkbox"
+                        value="{{course.id}}" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                        {{course.name}}
+                    </label>
+                </div>
+                <div *ngIf="submitted && personForm.get('courses')?.errors" class="invalid-feedback">
+                    <div *ngIf="personForm.get('courses')?.errors?.required">Course is required</div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
