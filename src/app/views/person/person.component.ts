@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import { CourseService } from 'src/app/core/services/course.service';
 import { Course } from 'src/app/models/course.module';
@@ -10,8 +11,9 @@ import { Person } from 'src/app/models/person.model';
   templateUrl: './person.component.html',
   styleUrls: ['./person.component.css']
 })
-export class PersonComponent implements OnInit {
+export class PersonComponent implements OnInit, OnDestroy {
 
+  private subcription = new Subscription();
   public courses: Course[] = [];
   public personForm: FormGroup;
   public submitted = false;
@@ -20,9 +22,9 @@ export class PersonComponent implements OnInit {
     private courseService: CourseService
   ) {
     this.personForm = this.createPersonForm();
-   }
+  }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getCourses();
   }
 
@@ -47,16 +49,19 @@ export class PersonComponent implements OnInit {
     if (event.target.checked) {
       courses.push(new FormControl(event.target.value));
     } else {
-       const index = courses.controls.findIndex(x => x.value === event.target.value);
-       courses.removeAt(index);
+      const index = courses.controls.findIndex(x => x.value === event.target.value);
+      courses.removeAt(index);
     }
 
   }
 
   public getCourses(): void {
-    this.courseService.getCourses()
-    .subscribe(courses => this.courses = courses);
+    this.subcription = this.courseService.getCourses()
+      .subscribe(courses => this.courses = courses);
   }
 
+  public ngOnDestroy(): void {
+    this.subcription.unsubscribe();
+  }
 
 }
