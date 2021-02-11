@@ -1,4 +1,4 @@
-import { Course } from "./course.module";
+import { Course } from './course.module';
 
 export class Person {
     constructor(
