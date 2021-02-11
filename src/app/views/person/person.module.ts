@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { PersonRoutingModule } from './person-routing.module';
 import { PersonComponent } from './person.component';
@@ -11,6 +12,7 @@ import { PersonComponent } from './person.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    ScrollingModule,
     PersonRoutingModule
   ]
 })

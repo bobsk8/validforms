@@ -25,3 +25,31 @@
         </div>
     </div>
 </div>
+
+
+<div class="card m-2">
+    <div class="card-header">
+        <h3 class="card-title">Person List</h3>
+    </div>
+    <div class="overlay" *ngIf="isLoading">
+        <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+    </div>
+    <div class="card-body table-responsive p-0" style="height: 300px;">
+        <div class="table-responsive" style="height: 300px;">
+            <cdk-virtual-scroll-viewport itemSize="45" (scrolledIndexChange)="handler($event)">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *cdkVirtualFor="let person of persons" style="cursor: pointer;">
+                            <td>{{person.name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { Subscription } from 'rxjs';
 
 import { CourseService } from 'src/app/core/services/course.service';
+import { PersonService } from 'src/app/core/services/person.service';
 import { Course } from 'src/app/models/course.module';
 import { Person } from 'src/app/models/person.model';
 
@@ -13,19 +14,24 @@ import { Person } from 'src/app/models/person.model';
 })
 export class PersonComponent implements OnInit, OnDestroy {
 
+  private page = 0;
   private subcription = new Subscription();
+  public isLoading = false;
+  public persons: Person[] = [];
   public courses: Course[] = [];
   public personForm: FormGroup;
   public submitted = false;
   constructor(
     private fb: FormBuilder,
-    private courseService: CourseService
+    private courseService: CourseService,
+    private personService: PersonService
   ) {
     this.personForm = this.createPersonForm();
   }
 
   public ngOnInit(): void {
     this.getCourses();
+    this.getPersons();
   }
 
   private createPersonForm(): FormGroup {
@@ -52,7 +58,6 @@ export class PersonComponent implements OnInit, OnDestroy {
       const index = courses.controls.findIndex(x => x.value === event.target.value);
       courses.removeAt(index);
     }
-
   }
 
   public getCourses(): void {
@@ -60,8 +65,25 @@ export class PersonComponent implements OnInit, OnDestroy {
       .subscribe(courses => this.courses = courses);
   }
 
+  public getPersons(): void {
+    this.subcription = this.personService.getPersons()
+      .subscribe(persons => this.persons = persons);
+  }
+
+  public nextPage(page: number): void {
+    this.subcription = this.personService.getNextPersons(page)
+      .subscribe(persons => this.persons = [...this.persons, ...persons]);
+  }
+
   public ngOnDestroy(): void {
     this.subcription.unsubscribe();
+  }
+
+  public handler(index: any): void {
+    if ((index + 6) === this.persons.length) {
+      this.page++;
+      this.nextPage(this.page);
+    }
   }
 
 }

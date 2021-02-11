@@ -1,3 +1,7 @@
 .invalid-feedback {
     display: block;
 }
+
+.cdk-virtual-scroll-viewport {
+    height: 300px;
+  }
