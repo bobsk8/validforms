@@ -61,18 +61,21 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   public getCourses(): void {
-    this.subcription = this.courseService.getCourses()
+    const subcription = this.courseService.getCourses()
       .subscribe(courses => this.courses = courses);
+    this.subcription.add(subcription);
   }
 
   public getPersons(): void {
-    this.subcription = this.personService.getPersons()
+    const subcription = this.personService.getPersons()
       .subscribe(persons => this.persons = persons);
+    this.subcription.add(subcription);
   }
 
   public nextPage(page: number): void {
-    this.subcription = this.personService.getNextPersons(page)
+    const subcription = this.personService.getNextPersons(page)
       .subscribe(persons => this.persons = [...this.persons, ...persons]);
+    this.subcription.add(subcription);
   }
 
   public ngOnDestroy(): void {
