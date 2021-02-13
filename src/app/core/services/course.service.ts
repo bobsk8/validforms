@@ -1,20 +1,36 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { Course } from 'src/app/models/course.module';
+import { environment } from './../../../environments/environment';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
 
-  constructor() { }
+  URL = environment.apiEndPoint;
+  constructor(
+    private http: HttpClient
+  ) { }
 
   public getCourses(): Observable<Course[]> {
-    const courses: Course[] = [];
-    for (let i = 1; i < 5; i++) {
-      courses.push(new Course(i, `course-${i}`));
-    }
-    return of(courses);
+    return this.http.get<Course[]>(`${this.URL}/api/courses`, httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error(error);
+    return throwError(error);
   }
 }

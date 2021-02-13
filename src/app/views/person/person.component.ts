@@ -14,7 +14,7 @@ import { Person } from 'src/app/models/person.model';
 })
 export class PersonComponent implements OnInit, OnDestroy {
 
-  private page = 0;
+  private page = 1;
   private subcription = new Subscription();
   public isLoading = false;
   public persons: Person[] = [];

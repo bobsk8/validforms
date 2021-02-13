@@ -1,31 +1,43 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Person } from 'src/app/models/person.model';
+import { environment } from './../../../environments/environment';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonService {
 
-  private count = 0;
-  constructor() { }
+  URL = environment.apiEndPoint;
+  constructor(
+    private http: HttpClient
+  ) { }
 
   public getPersons(): Observable<Person[]> {
-    const persons: Person[] = [];
-    for (let i = 0; i < 10; i++) {
-      this.count++;
-      persons.push(new Person(this.count, `person-${this.count}`));
-    }
-    return of(persons);
+    return this.http.get<Person[]>(`${this.URL}/api/persons`, httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 
-  public getNextPersons(page: number, pageSize: number = 10): Observable<Person[]> {
-    const persons: Person[] = [];
-    for (let i = 0; i < 10; i++) {
-      this.count++;
-      persons.push(new Person(this.count, `person-${this.count}`));
-    }
-    return of(persons);
+  public getNextPersons(page: number, limit: number = 10): Observable<Person[]> {
+    return this.http.get<Person[]>(`${this.URL}/api/persons?offset=${page}&limit=${limit}`, httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error(error);
+    return throwError(error);
   }
 
 }
