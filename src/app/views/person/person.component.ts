@@ -14,7 +14,8 @@ import { Person } from 'src/app/models/person.model';
 })
 export class PersonComponent implements OnInit, OnDestroy {
 
-  private page = 1;
+  public count = 0;
+  public page = 1;
   private subcription = new Subscription();
   public isLoading = false;
   public persons: Person[] = [];
@@ -67,14 +68,23 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   public getPersons(): void {
+    this.isLoading = true;
     const subcription = this.personService.getPersons()
-      .subscribe(persons => this.persons = persons);
+      .subscribe(data => {
+        this.persons = data.rows;
+        this.count = data.count;
+        this.isLoading = false;
+      });
     this.subcription.add(subcription);
   }
 
   public nextPage(page: number): void {
+    this.isLoading = true;
     const subcription = this.personService.getNextPersons(page)
-      .subscribe(persons => this.persons = [...this.persons, ...persons]);
+      .subscribe(data => {
+        this.persons = [...this.persons, ...data.rows];
+        this.isLoading = false;
+      });
     this.subcription.add(subcription);
   }
 
@@ -83,8 +93,9 @@ export class PersonComponent implements OnInit, OnDestroy {
   }
 
   public handler(index: any): void {
-    if ((index + 6) === this.persons.length) {
-      this.page++;
+    if ((index + 6) === this.persons?.length &&
+      this.persons?.length !== this.count) {
+      this.page += 1;
       this.nextPage(this.page);
     }
   }

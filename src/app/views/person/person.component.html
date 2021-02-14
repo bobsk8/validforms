@@ -24,32 +24,34 @@
             </form>
         </div>
     </div>
-</div>
-
-
-<div class="card m-2">
-    <div class="card-header">
-        <h3 class="card-title">Person List</h3>
-    </div>
-    <div class="overlay" *ngIf="isLoading">
-        <i class="fas fa-3x fa-sync-alt fa-spin"></i>
-    </div>
-    <div class="card-body table-responsive p-0" style="height: 300px;">
-        <div class="table-responsive" style="height: 300px;">
-            <cdk-virtual-scroll-viewport itemSize="45" (scrolledIndexChange)="handler($event)">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *cdkVirtualFor="let person of persons" style="cursor: pointer;">
-                            <td>{{person.name}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </cdk-virtual-scroll-viewport>
+    
+    <div class="row">
+        <div class="col">
+            <div class="card m-2">
+                <div class="overlay" *ngIf="isLoading">
+                    <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                </div>
+                <cdk-virtual-scroll-viewport itemSize="45" (scrolledIndexChange)="handler($event)">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Courses</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *cdkVirtualFor="let person of persons" style="cursor: pointer;">
+                                    <th scope="row">{{person.id}}</th>
+                                    <td>{{person.name}}</td>
+                                    <td>{{person.courses | json}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+            </div>
         </div>
     </div>
 </div>

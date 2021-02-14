@@ -4,4 +4,11 @@
 
 .cdk-virtual-scroll-viewport {
     height: 300px;
-  }
+}
+
+.overlay {
+    position: fixed;    
+    z-index: 1;
+    margin-top: 10%;
+    margin-left: 40%;
+}

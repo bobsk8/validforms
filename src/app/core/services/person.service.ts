@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Person } from 'src/app/models/person.model';
+
 import { environment } from './../../../environments/environment';
 
 const httpOptions = {
@@ -21,15 +21,15 @@ export class PersonService {
     private http: HttpClient
   ) { }
 
-  public getPersons(): Observable<Person[]> {
-    return this.http.get<Person[]>(`${this.URL}/api/persons`, httpOptions)
+  public getPersons(): Observable<any> {
+    return this.http.get<any>(`${this.URL}/api/persons`, httpOptions)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  public getNextPersons(page: number, limit: number = 10): Observable<Person[]> {
-    return this.http.get<Person[]>(`${this.URL}/api/persons?offset=${page}&limit=${limit}`, httpOptions)
+  public getNextPersons(page: number, limit: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.URL}/api/persons?offset=${page}&limit=${limit}`, httpOptions)
       .pipe(
         catchError(this.handleError)
       );

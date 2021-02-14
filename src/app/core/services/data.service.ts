@@ -59,7 +59,7 @@ export class DataService implements InMemoryDbService {
     if (reqInfo?.collectionName?.includes('persons')) {
       if (!!reqInfo?.query.has('offset') && !!reqInfo.query.has('limit')) {
         const page: any = reqInfo.query.get('offset');
-        const limit: any = reqInfo.query.has('limit');
+        const limit: any = reqInfo.query.get('limit');
         const persons = this.persons.slice(limit * (page - 1), limit * page);
         return this.getPersons(reqInfo, persons);
       } else {
@@ -72,13 +72,11 @@ export class DataService implements InMemoryDbService {
     return of();
   }
 
-  private getPersons(reqInfo: RequestInfo, data: any[]): Observable<any> {
+  private getPersons(reqInfo: RequestInfo, rows: any[]): Observable<any> {
     return reqInfo.utils.createResponse$(() => {
-      const dataEncapsulation = reqInfo.utils.getConfig().dataEncapsulation;
-
-      const options: ResponseOptions = data ?
+      const options: ResponseOptions = rows ?
         {
-          body: dataEncapsulation ? { data } : data,
+          body: { rows, count: this.persons.length },
           status: STATUS.OK
         } :
         {
