@@ -63,7 +63,7 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   public getCourses(): void {
     const subcription = this.courseService.getCourses()
-      .subscribe(courses => this.courses = courses);
+      .subscribe(data => this.courses = data.rows);
     this.subcription.add(subcription);
   }
 

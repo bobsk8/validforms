@@ -22,8 +22,8 @@ export class CourseService {
     private http: HttpClient
   ) { }
 
-  public getCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.URL}/api/courses`, httpOptions)
+  public getCourses(): Observable<any> {
+    return this.http.get<any>(`${this.URL}/api/courses`, httpOptions)
       .pipe(
         catchError(this.handleError)
       );

@@ -61,26 +61,27 @@ export class DataService implements InMemoryDbService {
         const page: any = reqInfo.query.get('offset');
         const limit: any = reqInfo.query.get('limit');
         const persons = this.persons.slice(limit * (page - 1), limit * page);
-        return this.getPersons(reqInfo, persons);
+        return this.getDatas(reqInfo, persons, this.persons.length);
       } else {
         const page = 1;
         const limit = 10;
         const persons = this.persons.slice(limit * (page - 1), limit * page);
-        return this.getPersons(reqInfo, persons);
+        return this.getDatas(reqInfo, persons, this.persons.length);
       }
+    } else {
+      return this.getDatas(reqInfo, this.courses, this.courses.length);
     }
-    return of();
   }
 
-  private getPersons(reqInfo: RequestInfo, rows: any[]): Observable<any> {
+  private getDatas(reqInfo: any, rows: any[], count: number): Observable<any> {
     return reqInfo.utils.createResponse$(() => {
       const options: ResponseOptions = rows ?
         {
-          body: { rows, count: this.persons.length },
+          body: { rows, count },
           status: STATUS.OK
         } :
         {
-          body: { error: `'Persons' not found` },
+          body: { error: 'Not found' },
           status: STATUS.NOT_FOUND
         };
       return this.finishOptions(options, reqInfo);
