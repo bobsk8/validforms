@@ -14,7 +14,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class AuthService {
 
   URL = environment.apiEndPoint;
   constructor(
@@ -26,6 +26,10 @@ export class LoginService {
     .pipe(
       catchError(this.handleError)
     );
+  }
+
+  public logout(): void {
+    localStorage.clear();
   }
 
   private handleError(error: any): Observable<never> {

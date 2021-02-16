@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { LoginService } from 'src/app/core/services/login.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private subcription = new Subscription();
   constructor(
     private userService: UserService,
-    private loginService: LoginService,
+    private authService: AuthService,
     private fb: FormBuilder,
     private router: Router
   ) {
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private login(username: string, password: string): void {
-    this.subcription = this.loginService.login(username, password)
+    this.subcription = this.authService.login(username, password)
       .subscribe(user => {
         if (user.success) {
           this.userService.setCurrentUser(user);
