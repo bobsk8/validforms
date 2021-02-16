@@ -2,8 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./views/person/person.module')
-  .then(m => m.PersonModule) }
+  {
+    path: 'main', loadChildren: () => import('./views/main/main.module')
+      .then(m => m.MainModule)
+  },
+  {
+    path: '', loadChildren: () => import('./views/login/login.module')
+      .then(m => m.LoginModule)
+  },
+  { path: 'main', redirectTo: 'main/person', pathMatch: 'full' },
+  {
+    path: '**', redirectTo: 'login', pathMatch: 'full'
+  }
 ];
 
 @NgModule({

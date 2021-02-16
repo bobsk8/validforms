@@ -1,19 +1,34 @@
-import { getStatusText, InMemoryDbService, RequestInfo, ResponseOptions, STATUS } from 'angular-in-memory-web-api';
-import { Observable, of } from 'rxjs';
+import {
+  getStatusText,
+  InMemoryDbService,
+  RequestInfo,
+  ResponseOptions,
+  STATUS
+} from 'angular-in-memory-web-api';
+import { Observable } from 'rxjs';
 
 import { Course } from 'src/app/models/course.module';
 import { Person } from 'src/app/models/person.model';
+import { User } from 'src/app/models/user.model';
 
 export class DataService implements InMemoryDbService {
 
   courses: Course[] = [];
   persons: Person[] = [];
+  users: User[] = [];
+  auth: any = {};
   constructor() { }
 
   // https://github.com/angular/in-memory-web-api/blob/master/src/app/hero-in-mem-data-override.service.ts
   // override.service
   createDb(): {} | Observable<{}> | Promise<{}> {
 
+    this.auth = {
+      id: 1, username: 'test@hotmail.com', password: '123'
+    };
+    this.users = [
+      new User(1, 'Admin')
+    ];
     this.courses = [
       new Course(1, 'Java'), new Course(2, 'React'),
       new Course(3, 'Angular'), new Course(4, 'C#'),
@@ -52,7 +67,7 @@ export class DataService implements InMemoryDbService {
       new Person(30, 'Kiko', [new Course(1, 'Java'), new Course(2, 'React')]),
     ];
 
-    return { persons: this.persons, courses: this.courses };
+    return { persons: this.persons, courses: this.courses, users: this.users, auth: this.auth };
   }
 
   get(reqInfo?: RequestInfo): Observable<any> {
@@ -61,19 +76,27 @@ export class DataService implements InMemoryDbService {
         const page: any = reqInfo.query.get('offset');
         const limit: any = reqInfo.query.get('limit');
         const persons = this.persons.slice(limit * (page - 1), limit * page);
-        return this.getDatas(reqInfo, persons, this.persons.length);
+        return this.createGetRequest(reqInfo, persons, this.persons.length);
       } else {
         const page = 1;
         const limit = 10;
         const persons = this.persons.slice(limit * (page - 1), limit * page);
-        return this.getDatas(reqInfo, persons, this.persons.length);
+        return this.createGetRequest(reqInfo, persons, this.persons.length);
       }
     } else {
-      return this.getDatas(reqInfo, this.courses, this.courses.length);
+      return this.createGetRequest(reqInfo, this.courses, this.courses.length);
     }
   }
 
-  private getDatas(reqInfo: any, rows: any[], count: number): Observable<any> {
+  post(requestInfo: any): Observable<any> {
+    if (requestInfo?.url?.includes('auth')) {
+      const auth = this.getAuthValid(requestInfo.req);
+      return this.createPostRequest(requestInfo, auth);
+    }
+    return this.createPostRequest(requestInfo, { success: false });
+  }
+
+  private createGetRequest(reqInfo: any, rows: any[], count: number): Observable<any> {
     return reqInfo.utils.createResponse$(() => {
       const options: ResponseOptions = rows ?
         {
@@ -86,6 +109,33 @@ export class DataService implements InMemoryDbService {
         };
       return this.finishOptions(options, reqInfo);
     });
+  }
+
+  private createPostRequest(reqInfo: any, auth: any): Observable<any> {
+    return reqInfo.utils.createResponse$(() => {
+      const options: ResponseOptions = auth ?
+        {
+          body: { ...auth },
+          status: STATUS.OK
+        } :
+        {
+          body: { error: 'Not found' },
+          status: STATUS.NOT_FOUND
+        };
+      return this.finishOptions(options, reqInfo);
+    });
+  }
+
+  private getAuthValid(req: any): any {
+    const { body } = req;
+    const { username, password } = body;
+    if (username === 'test@hotmail.com' && password === '123') {
+      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbW
+      luIiwiaWF0IjoxNTE2MjM5MDIyfQ.1Jy-gGjEJVq6me2f6YMguG5Pgjtmgkw1E7Qucttkbbs`;
+      return { token, user: this.users[0], success: true };
+    } else {
+      return { success: false };
+    }
   }
 
   /////////// helpers ///////////////
