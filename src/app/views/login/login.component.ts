@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { LoginService } from 'src/app/core/services/login.service';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public loginForm: FormGroup;
   private subcription = new Subscription();
   constructor(
+    private userService: UserService,
     private loginService: LoginService,
     private fb: FormBuilder,
     private router: Router
@@ -34,9 +36,14 @@ export class LoginComponent implements OnInit, OnDestroy {
       return;
     }
     const { username, password } = form.value;
+    this.login(username, password);
+  }
+
+  private login(username: string, password: string): void {
     this.subcription = this.loginService.login(username, password)
-      .subscribe(auth => {
-        if (auth.success) {
+      .subscribe(user => {
+        if (user.success) {
+          this.userService.setCurrentUser(user);
           this.router.navigate(['main/person']);
         } else {
           this.wrongAuth = true;
